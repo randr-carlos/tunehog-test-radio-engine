@@ -9,6 +9,7 @@ var playedTracks = [];
 var scoredTracks = [];
 var radioState = {};
 var weather = {};
+var weather_prediction = {};
 
 
 /** Example's function */
@@ -35,7 +36,11 @@ function MyUpdate() {
         "<li>influence tracks:<b>" + influenceTracks.length + "</b></li>" + 
         "<li>scored tracks:<b>" + scoredTracks.length + "</b></li>" + 
         "<li>played tracks:<b>" + playedTracks.length + "</b></li>"  + txt + 
-        "<li>weather:<b>" + JSON.stringify(weather) + "</b></li>"
+        "<li>weather:<b>" + JSON.stringify(weather) + "</b></li>" + 
+        "<li>weather prediction:<b>" + JSON.stringify(weather_prediction) + "</b></li>"
+        
+        
+        
     );
 }
 
@@ -85,11 +90,18 @@ function OpenRadio_UserDidPlayTrack(track) {
  */
 function OpenRadio_GetNextTracks(state) {
     
-    
-	var URI = 'http://api.openweathermap.org/data/2.5/weather?lat=35&lon=139';
+///    http://api.openweathermap.org/data/2.5/forecast/daily?lat=35&lon=139&cnt=1&mode=json&units=metric
+	var URI = 'http://api.openweathermap.org/data/2.5/weather?lat=51.5072&lon=0.1275&units=metric';
 	$.ajax({url:URI,dataType:"jsonp"})
     	  .done(function(object){
     	      weather = object;
+    	      URI = 'http://api.openweathermap.org/data/2.5/forecast/daily?lat=35&lon=139&cnt=1&mode=json&units=metric';
+		$.ajax({url:URI,dataType:"jsonp"})
+    		  .done(function(object2){
+    		  	weather_prediction = object2;
+   		   .fail(function(){
+		        });
+    	      
         })
    		   .fail(function(){
         });
