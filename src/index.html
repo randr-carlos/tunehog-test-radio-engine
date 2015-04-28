@@ -80,6 +80,7 @@ function OpenRadio_UserDidScoreTrack(payload) {
  */
 function OpenRadio_UserDidPlayTrack(track) {
     playedTracks.push(track);
+      $('#currentTrack').html(track.id);
     MyUpdate();
 }
 
@@ -123,7 +124,8 @@ function OpenRadio_GetNextTracks(state) {
 
 </script>
 <body>
-<h1>JAZZ2!!! Status:<div id="status"></div> </h1>
+<h1>JAZZ3!!! Status:<div id="status"></div> </h1>
+<h1>Track being played:<div id="currentTrack"></div> </h1>
 <h1><div id="main">Waiting...</div> </h1>
 </body>
 </html>
