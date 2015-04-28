@@ -80,7 +80,7 @@ function OpenRadio_UserDidScoreTrack(payload) {
  */
 function OpenRadio_UserDidPlayTrack(track) {
     playedTracks.push(track);
-      $('#currentTrack').html(track.id);
+      $('#currentTrack').html(JSON.stringify(currentTrack));
     MyUpdate();
 }
 
