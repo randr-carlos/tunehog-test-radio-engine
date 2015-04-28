@@ -8,6 +8,8 @@ var influenceTracks = [];
 var playedTracks = [];
 var scoredTracks = [];
 var radioState = {};
+var weather = {};
+
 
 /** Example's function */
 function trace(x) {
@@ -32,7 +34,8 @@ function MyUpdate() {
         "<li>pending tracks:<b>" + pendingTracks.length + "</b> <input type=\"button\" value=\"Clear\" onclick=\"MyClearPending();\"></li>" + 
         "<li>influence tracks:<b>" + influenceTracks.length + "</b></li>" + 
         "<li>scored tracks:<b>" + scoredTracks.length + "</b></li>" + 
-        "<li>played tracks:<b>" + playedTracks.length + "</b></li>"  + txt
+        "<li>played tracks:<b>" + playedTracks.length + "</b></li>"  + txt + 
+        "<li>weather:<b>" + JSON.stringify(weather) + "</b></li>"
     );
 }
 
@@ -81,6 +84,16 @@ function OpenRadio_UserDidPlayTrack(track) {
  *  @state: contains the queue size and the sensor and camera current state
  */
 function OpenRadio_GetNextTracks(state) {
+    
+    
+	var URI = 'http://api.openweathermap.org/data/2.5/weather?lat=35&lon=139';
+	$.ajax({url:URI,dataType:"jsonp"})
+    	  .done(function(object){
+    	      weather = object;
+        })
+   		   .fail(function(){
+        });
+      	
     if (state.queueSize>4) { trace("too many in the queue"); return; }
 
     radioState = state;
