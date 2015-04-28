@@ -99,6 +99,7 @@ function OpenRadio_GetNextTracks(state) {
 		$.ajax({url:URI,dataType:"jsonp"})
     		  .done(function(object2){
     		  	weather_prediction = object2;
+    		  })
    		   .fail(function(){
 		        });
     	      
