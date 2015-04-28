@@ -11,6 +11,9 @@ var radioState = {};
 var weather = {};
 var weather_prediction = {};
 var temp_score = 0;
+var temp_min = 0;
+var temp_max = 0;
+var temp  = 0;
 
 
 /** Example's function */
@@ -34,7 +37,7 @@ function MyUpdate() {
     $('#main').html(
 
 
-        "<li>temp_score:<b>" + temp_score + "</b></li>" + 
+        "<li>temp_score:<b>" + temp_score + ":" + temp + ":" + temp_min + ":" + temp_max + "</b></li>" + 
         "<li>pending tracks:<b>" + pendingTracks.length + "</b> <input type=\"button\" value=\"Clear\" onclick=\"MyClearPending();\"></li>" + 
         "<li>influence tracks:<b>" + influenceTracks.length + "</b></li>" + 
         "<li>scored tracks:<b>" + scoredTracks.length + "</b></li>" + 
@@ -103,10 +106,11 @@ function OpenRadio_GetNextTracks(state) {
     		  .done(function(object2){
     		  	weather_prediction = object2;
     		  	
-    		  	min = weather_prediction.list[0].temp.min;
-    		  	max = weather_prediction.list[0].temp.max;
-    		  	score = weather.main.temp - min;
-    		  	temp_delta = max - min;
+    		  	temp_min = weather_prediction.list[0].temp.min;
+    		  	temp_max = weather_prediction.list[0].temp.max;
+    		  	temp     = weather.main.temp;
+    		  	score = temp - temp_min;
+    		  	temp_delta = temp_max - temp_min;
     		  	if (temp_delta>0) {
     		  	    temp_score = score / temp_delta;	
     		  	}
