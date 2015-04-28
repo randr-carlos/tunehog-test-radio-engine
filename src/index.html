@@ -31,8 +31,6 @@ function MyUpdate() {
     }
 
     $('#main').html(
-
-
         "<li>energy:<b>" + energy + "</b></li>" + 
         "<li>temperature:<b>" + lastTemperature + ":" + lastTemperatureIncrement +  "</b></li>" + 
         "<li>pending tracks:<b>" + pendingTracks.length + "</b> <input type=\"button\" value=\"Clear\" onclick=\"MyClearPending();\"></li>" + 
@@ -68,7 +66,6 @@ function OpenRadio_AddTrackInfluence(state, track) {
 function OpenRadio_UserDidScoreTrack(payload) {
     scoredTracks.push(payload);
     if (payload.score>0) {
-        console.log("adding tracks");
         MusicCatalog_PushSimilarTracks(pendingTracks, payload.track, function(err) {
                         MyUpdate();
                 });
@@ -80,7 +77,7 @@ function OpenRadio_UserDidScoreTrack(payload) {
  */
 function OpenRadio_UserDidPlayTrack(track) {
     playedTracks.push(track);
-      $('#currentTrack').html(JSON.stringify(currentTrack));
+      $('#currentTrack').html(track.track.id));
     MyUpdate();
 }
 
