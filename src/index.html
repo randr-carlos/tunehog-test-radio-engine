@@ -8,13 +8,9 @@ var influenceTracks = [];
 var playedTracks = [];
 var scoredTracks = [];
 var radioState = {};
-var weather = {};
-var weather_prediction = {};
-var temp_score = 0;
-var temp_min = 0;
-var temp_max = 0;
-var temp  = 0;
-
+var lastTemperature = 23;
+var lastTemperatureIncrement = 0;
+var energy = 90;
 
 /** Example's function */
 function trace(x) {
@@ -37,16 +33,13 @@ function MyUpdate() {
     $('#main').html(
 
 
-        "<li>temp_score:<b>" + temp_score + ":" + temp + ":" + temp_min + ":" + temp_max + "</b></li>" + 
+        "<li>energy:<b>" + energy + "</b></li>" + 
+        "<li>temperature:<b>" + lastTemperature + ":" + lastTemperatureIncrement +  "</b></li>" + 
+        "<li>energy:<b>" + energy + "</b></li>" + 
         "<li>pending tracks:<b>" + pendingTracks.length + "</b> <input type=\"button\" value=\"Clear\" onclick=\"MyClearPending();\"></li>" + 
         "<li>influence tracks:<b>" + influenceTracks.length + "</b></li>" + 
         "<li>scored tracks:<b>" + scoredTracks.length + "</b></li>" + 
-        "<li>played tracks:<b>" + playedTracks.length + "</b></li>"  + txt + 
-        "<li>weather:<b>" + JSON.stringify(weather) + "</b></li>" + 
-        "<li>weather prediction:<b>" + JSON.stringify(weather_prediction) + "</b></li>"
-        
-        
-        
+        "<li>played tracks:<b>" + playedTracks.length + "</b></li>"  + txt  
     );
 }
 
@@ -95,32 +88,15 @@ function OpenRadio_UserDidPlayTrack(track) {
  *  @state: contains the queue size and the sensor and camera current state
  */
 function OpenRadio_GetNextTracks(state) {
-    
-///    http://api.openweathermap.org/data/2.5/forecast/daily?lat=35&lon=139&cnt=1&mode=json&units=metric
+
 	var URI = 'http://api.openweathermap.org/data/2.5/weather?lat=51.5072&lon=0.1275&units=metric';
-	$.ajax({url:URI,dataType:"jsonp"})
-    	  .done(function(object){
-    	      weather = object;
-    	      URI = 'http://api.openweathermap.org/data/2.5/forecast/daily?lat=35&lon=139&cnt=1&mode=json&units=metric';
-		$.ajax({url:URI,dataType:"jsonp"})
-    		  .done(function(object2){
-    		  	weather_prediction = object2;
-    		  	
-    		  	temp_min = weather_prediction.list[0].temp.min;
-    		  	temp_max = weather_prediction.list[0].temp.max;
-    		  	temp     = weather.main.temp;
-    		  	score = temp - temp_min;
-    		  	temp_delta = temp_max - temp_min;
-    		  	if (temp_delta>0) {
-    		  	    temp_score = score / temp_delta;	
-    		  	}
-    		  })
-   		   .fail(function(){
-		        });
-    	      
-        })
-   		   .fail(function(){
-        });
+	$.ajax({url:URI,dataType:"jsonp"}).done(function(weather){
+    	  	var currentTemperature = weather.main.temp;
+    	  	lastTemperatureIncrement = currentTemperature - lastTemperature;
+    	  	if (lastTemperatureIncrement>0 && energy<150) energy += 5;
+    	  	else if (lastTemperatureIncrement<0 && energy>20) energy -= 5;
+    	  	lastTemperature = currentTemperature;
+    	   });
       	
     if (state.queueSize>4) { trace("too many in the queue"); return; }
 
@@ -136,7 +112,10 @@ function OpenRadio_GetNextTracks(state) {
 
         var qs = 1;                                                                                                                                    
         if (radioState.queueSize==0) qs = 2; 
-        MusicCatalog_FindTracks(qs, [ { "term": { "genre": "Jazz" } }, { "term": { "analysis.genre_cloud.top": "Jazz" } } ],
+        MusicCatalog_FindTracks(qs, [ 
+        	{"range" : {"analysis.energy" : {"gt" : energy-10, "lt":energy+10}}},
+        	{ "term": { "genre": "Jazz" } }, 
+        	{ "term": { "analysis.genre_cloud.top": "Jazz" } } ],
                         function(err,tracks) {
             if(!err) OpenRadio_EnqueueTracks(tracks, false);
         });
