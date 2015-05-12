@@ -1,8 +1,8 @@
 {
   "name":"Jazz POC",
   "version":"1.2.3",
-  "categories":["Jazz","@Sports"],
-  "tags":["Jazz","Weather"],
+  "categories":["Jazz"],
+  "tags":["Jazz"],
   "description" : "Temperature based Jazz.",
   "developer" :
     {
